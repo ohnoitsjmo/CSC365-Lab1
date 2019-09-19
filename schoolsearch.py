@@ -24,10 +24,20 @@ class SchoolSearch:
         while command != "Q" or command != "Quit":
             if command == "Student" or command == "S":
                 last_name = input("Enter last name: ") 
-                self.student(last_name)
+                self.student(last_name, _dict)
     
-    def student(self, last_name):
-        print(last_name)
+    def student(self, last_name, _dict):
+        inputs = last_name.split(" ")
+        if len(inputs) == 1:
+            for student in _dict.values():
+                if student.StLastName == inputs[0]:
+                    print("Student Last Name: {}".format(student.StLastName))
+                    print("Student First Name: {}".format(student.StFirstName))
+                    print("Grade: {}".format(student.Grade))
+                    print("Classroom: {}".format(student.Classroom))
+                    print("Teacher Last Name: {}".format(student.TLastName))
+                    print("Teacher First Name: {}".format(student.TFirstName))
+                    
 
     # def teacher():
 
