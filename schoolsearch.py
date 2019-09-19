@@ -38,7 +38,7 @@ class SchoolSearch:
                     print("Classroom: {}".format(student.Classroom))
                     print("Teacher Last Name: {}".format(student.TLastName))
                     print("Teacher First Name: {}".format(student.TFirstName))
-        if len(inputs) == 2 and inputs[1] == "B" or inputs[1] == "Bus":
+        elif len(inputs) == 2 and inputs[1] == "B" or inputs[1] == "Bus":
             for student in _dict.values():
                 if student.StLastName == inputs[0]:
                     print("Student Last Name: {}".format(student.StLastName))
