@@ -10,7 +10,7 @@ class Student:
         self.TFirstName = TFirstName
 
 class SchoolSearch:
-    def main():
+    def main(self):
         command = input("Enter search command: ") 
         file = open("students.txt", "r")
         _dict = dict()
@@ -20,15 +20,14 @@ class SchoolSearch:
             # Increment i and set student to respective index in dictionary
             _dict[i] = Student(student[0], student[1], student[2], student[3], student[4], student[5], student[6], student[7])
             i += 1
-        print(_dict.items())
-    
+
         while command != "Q" or command != "Quit":
             if command == "Student" or command == "S":
-                command = input("Enter search command: ") 
-                student()
+                last_name = input("Enter last name: ") 
+                self.student(last_name)
     
-    def student():
-        print("student")
+    def student(self, last_name):
+        print(last_name)
 
     # def teacher():
 
@@ -42,5 +41,5 @@ class SchoolSearch:
 
     # def quit():
 
-    if __name__ == "__main__":
-        main()
+s = SchoolSearch()
+s.main()
