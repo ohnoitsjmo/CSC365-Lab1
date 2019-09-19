@@ -22,11 +22,13 @@ class SchoolSearch:
             i += 1
         print(_dict.items())
     
-        # while command != "Q" or command != "Quit":
-            # if command == "Student":
-            #     student()
+        while command != "Q" or command != "Quit":
+            if command == "Student" or command == "S":
+                command = input("Enter search command: ") 
+                student()
     
-    # def student():
+    def student():
+        print("student")
 
     # def teacher():
 
