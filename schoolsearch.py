@@ -25,6 +25,7 @@ class SchoolSearch:
             if command == "Student" or command == "S":
                 last_name = input("Enter last name: ") 
                 self.student(last_name, _dict)
+                command = input("Enter search command: ") 
     
     def student(self, last_name, _dict):
         inputs = last_name.split(" ")
@@ -37,6 +38,12 @@ class SchoolSearch:
                     print("Classroom: {}".format(student.Classroom))
                     print("Teacher Last Name: {}".format(student.TLastName))
                     print("Teacher First Name: {}".format(student.TFirstName))
+        if len(inputs) == 2 and inputs[1] == "B" or inputs[1] == "Bus":
+            for student in _dict.values():
+                if student.StLastName == inputs[0]:
+                    print("Student Last Name: {}".format(student.StLastName))
+                    print("Student First Name: {}".format(student.StFirstName))
+                    print("Bus Route: {}".format(student.Bus))  
                     
 
     # def teacher():
