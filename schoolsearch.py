@@ -43,27 +43,28 @@ class SchoolSearch:
                 return
             command = input("Enter search command: ") 
     
-    def student(self, last_name, _dict):
-        inputs = last_name.split(" ")
-        if len(inputs) == 1:
+    def student(self, command, _dict):
+        inputs = command.split(" ")
+        if len(inputs) == 2:
             for student in _dict.values():
-                if student.StLastName == inputs[0]:
+                if student.StLastName == inputs[1]:
                     print("Student Last Name: {}".format(student.StLastName))
                     print("Student First Name: {}".format(student.StFirstName))
                     print("Grade: {}".format(student.Grade))
                     print("Classroom: {}".format(student.Classroom))
                     print("Teacher Last Name: {}".format(student.TLastName))
                     print("Teacher First Name: {}".format(student.TFirstName))
-        elif len(inputs) == 2 and inputs[1] == "B" or inputs[1] == "Bus":
+        elif len(inputs) == 3 and inputs[2] == "B" or inputs[2] == "Bus":
             for student in _dict.values():
-                if student.StLastName == inputs[0]:
+                if student.StLastName == inputs[1]:
                     print("Student Last Name: {}".format(student.StLastName))
                     print("Student First Name: {}".format(student.StFirstName))
                     print("Bus Route: {}".format(student.Bus))  
                     
-    def teacher(self, last_name, _dict):
+    def teacher(self, command, _dict):
+        inputs = command.split(" ")
         for student in _dict.values():
-            if last_name == student.TLastName:
+            if inputs[1] == student.TLastName:
                 print("Student Last Name: {}".format(student.StLastName))
                 print("Student First Name: {}".format(student.StFirstName))
                 
