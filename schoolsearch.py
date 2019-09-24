@@ -1,3 +1,5 @@
+import re
+
 class Student:
     def __init__(self, StLastName, StFirstName, Grade, Classroom, Bus, GPA, TLastName, TFirstName):
         self.StLastName = StLastName
@@ -22,13 +24,23 @@ class SchoolSearch:
             i += 1
 
         while command != "Q" or command != "Quit":
-            if command == "Student" or command == "S":
-                last_name = input("Enter last name: ") 
-                self.student(last_name, _dict)
+            if self.is_command_type("Student",command):
+                self.student(command, _dict)
+            elif self.is_command_type("Teacher",command):
+                self.teacher(command, _dict)
             elif self.is_command_type("Bus",command):
                 self.bus(command,_dict)
             elif self.is_command_type("Grade",command) :
                 self.grade(command,_dict)
+            elif self.is_command_type("Average",command):
+                self.average(command, _dict)
+            elif command == "Info" or command == "I":
+                self.info(_dict)
+            # if user want to quit
+            # print Goodbye and stop program
+            elif command == "Q" or command == "Quit":
+                self.quit()
+                return
             command = input("Enter search command: ") 
     
     def student(self, last_name, _dict):
@@ -49,7 +61,6 @@ class SchoolSearch:
                     print("Student First Name: {}".format(student.StFirstName))
                     print("Bus Route: {}".format(student.Bus))  
                     
-
     def teacher(self, last_name, _dict):
         for student in _dict.values():
             if last_name == student.TLastName:
