@@ -106,7 +106,8 @@ class SchoolSearch:
                     print (_dict[item].StFirstName + " " + 
                       _dict[item].StLastName + "\n")
 
-    def average(self, grade_value, _dict):
+    def average(self, command, _dict):
+        inputs = command.split(" ")
         # if no students in database
         # do nothing and return
         if len(_dict) == 0:
@@ -119,7 +120,7 @@ class SchoolSearch:
             # check if student's grade equal to given grade
             # if so, convert student's GPA to float and add to the list
             try:
-                if student.Grade == grade_value:
+                if student.Grade == inputs[1]:
                     selected_students.append(float(student.GPA))
             # in the case of error (GPA is not a number)
             # return
@@ -129,8 +130,8 @@ class SchoolSearch:
         # compute average gpa and print message
         if selected_students:
             average_gpa = sum(selected_students) / len(selected_students)
-            print("Grade: {}".format(grade_value))
-            print("GPA: {}".format(average_gpa))
+            print("Grade: {}".format(inputs[1]))
+            print("GPA: {}".format(round(average_gpa,2)))
         # in other case return
         else:
             return
