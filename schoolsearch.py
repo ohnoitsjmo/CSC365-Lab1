@@ -25,11 +25,11 @@ class SchoolSearch:
             if command == "Student" or command == "S":
                 last_name = input("Enter last name: ") 
                 self.student(last_name, _dict)
-            elif command == "Teacher" or command == "T":
-                last_name = input("Enter last name: ") 
-                self.teacher(last_name, _dict)
+            elif self.is_command_type("Bus",command):
+                self.bus(command,_dict)
+            elif self.is_command_type("Grade",command) :
+                self.grade(command,_dict)
             command = input("Enter search command: ") 
-
     
     def student(self, last_name, _dict):
         inputs = last_name.split(" ")
@@ -56,15 +56,100 @@ class SchoolSearch:
                 print("Student Last Name: {}".format(student.StLastName))
                 print("Student First Name: {}".format(student.StFirstName))
                 
-    # def bus():
+    def is_command_type(self,command_type_string,command):
+        if command_type_string + ": " in command or command_type_string[0] + ": " in command:
+            return True
+        return False
 
-    # def grade():
+    def bus(self,bus_command,_dict):
+        bus_num = re.search(r'\d+', bus_command).group()
+        for item in _dict:
+            if(_dict[item].Bus == bus_num):
+                print (_dict[item].StFirstName + " " + 
+                  _dict[item].StLastName + " " + _dict[item].Grade + 
+                  " " + _dict[item].Classroom + "\n")
 
-    # def average():
+    def grade(self,grade_command,_dict):
+        grade_number = re.search(r'\d+', grade_command).group()
+        if " High" in grade_command or " H" in grade_command:
+            highest = _dict[0]
+            for item in _dict:
+                if(_dict[item].Grade == grade_number and 
+                    _dict[item].GPA > highest.GPA):
+                  highest = _dict[item]
+            if highest.Grade == grade_number:
+                print (highest.StFirstName + " " + highest.StLastName)
+            return
+        elif " Low" in grade_command or " L" in grade_command:
+            lowest = _dict[0]
+            for item in _dict:
+                if(_dict[item].Grade == grade_number and 
+                    _dict[item].GPA < lowest.GPA):
+                  lowest = _dict[item]
+            if lowest.Grade == grade_number:
+                print (lowest.StFirstName + " " + lowest.StLastName)
+            return
+        for item in _dict:
+                if(_dict[item].Grade == grade_number):
+                    print (_dict[item].StFirstName + " " + 
+                      _dict[item].StLastName + "\n")
 
-    # def info():
+    def average(self, grade_value, _dict):
+        # if no students in database
+        # do nothing and return
+        if len(_dict) == 0:
+            return
+        # create list to save students GPA
+        # if found students have given grade
+        selected_students = []
+        # for each student
+        for student in _dict.values():
+            # check if student's grade equal to given grade
+            # if so, convert student's GPA to float and add to the list
+            try:
+                if student.Grade == grade_value:
+                    selected_students.append(float(student.GPA))
+            # in the case of error (GPA is not a number)
+            # return
+            except ValueError:
+                return
+        # if students with given grade were found
+        # compute average gpa and print message
+        if selected_students:
+            average_gpa = sum(selected_students) / len(selected_students)
+            print("Grade: {}".format(grade_value))
+            print("GPA: {}".format(average_gpa))
+        # in other case return
+        else:
+            return
 
-    # def quit():
+    def info(self, _dict):
+        # if no students in database
+        # do nothing and return
+        if len(_dict) == 0:
+            return
+            # create dictionary-counter with keys - grade (0-6)
+        # and values counts of students which have given grade
+        grades_dict = {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+        }
+        # for every student
+        # take grade and increase appropriate value of dict-counter by 1
+        for student in _dict.values():
+            grades_dict[student.Grade] += 1
+        # print results
+        for key in sorted(grades_dict.keys()):
+            print("Grade {}: {}".format(key, grades_dict[key]))
+
+    def quit(self):
+        # print goodbye message
+        print("Goodbye!")
 
 s = SchoolSearch()
 s.main()
