@@ -24,49 +24,66 @@ class SchoolSearch:
             i += 1
 
         while command != "Q" or command != "Quit":
+            isComment = command.startswith('#') or command.startswith("//")
+            isAction = False
             if self.is_command_type("Student",command):
                 self.student(command, _dict)
+                isAction = True
             elif self.is_command_type("Teacher",command):
                 self.teacher(command, _dict)
+                isAction = True
             elif self.is_command_type("Bus",command):
                 self.bus(command,_dict)
+                isAction = True
             elif self.is_command_type("Grade",command) :
                 self.grade(command,_dict)
+                isAction = True
             elif self.is_command_type("Average",command):
                 self.average(command, _dict)
+                isAction = True
             elif command == "Info" or command == "I":
                 self.info(_dict)
+                isAction = True
             # if user want to quit
             # print Goodbye and stop program
             elif command == "Q" or command == "Quit":
                 self.quit()
+                file.close()
                 return
-            command = input("Enter search command: ") 
+            if (isComment):
+                command = input("")
+            elif(not isAction):
+                command = input("\nEnter search command: ") 
+            else:
+                command = input("Enter search command: ") 
     
     def student(self, command, _dict):
         inputs = command.split(" ")
+        counter = 0
         if len(inputs) == 2:
             for student in _dict.values():
                 if student.StLastName == inputs[1]:
-                    print("Student Last Name: {}".format(student.StLastName))
-                    print("Student First Name: {}".format(student.StFirstName))
-                    print("Grade: {}".format(student.Grade))
-                    print("Classroom: {}".format(student.Classroom))
-                    print("Teacher Last Name: {}".format(student.TLastName))
-                    print("Teacher First Name: {}".format(student.TFirstName))
+                    counter+= 1
+                    print (student.StLastName + "," + student.StFirstName + "," +
+                        student.Grade + "," + student.Classroom + "," + student.TLastName+
+                        student.TFirstName)
         elif len(inputs) == 3 and inputs[2] == "B" or inputs[2] == "Bus":
             for student in _dict.values():
                 if student.StLastName == inputs[1]:
-                    print("Student Last Name: {}".format(student.StLastName))
-                    print("Student First Name: {}".format(student.StFirstName))
-                    print("Bus Route: {}".format(student.Bus))  
+                    counter+= 1
+                    print(student.StLastName + "," + student.StFirstName + "," + student.Bus)
+        if(counter == 0):
+            print("")
                     
     def teacher(self, command, _dict):
         inputs = command.split(" ")
+        counter = 0
         for student in _dict.values():
             if inputs[1] == student.TLastName:
-                print("Student Last Name: {}".format(student.StLastName))
-                print("Student First Name: {}".format(student.StFirstName))
+                counter+= 1
+                print(student.StLastName + "," + student.StFirstName)
+        if(counter == 0):
+            print("")
                 
     def is_command_type(self,command_type_string,command):
         if command_type_string + ": " in command or command_type_string[0] + ": " in command:
@@ -75,14 +92,19 @@ class SchoolSearch:
 
     def bus(self,bus_command,_dict):
         bus_num = re.search(r'\d+', bus_command).group()
+        counter = 0
         for item in _dict:
             if(_dict[item].Bus == bus_num):
-                print (_dict[item].StFirstName + " " + 
-                  _dict[item].StLastName + " " + _dict[item].Grade + 
-                  " " + _dict[item].Classroom + "\n")
+                counter+= 1
+                print (_dict[item].StFirstName + "," + 
+                  _dict[item].StLastName + "," + _dict[item].Grade + 
+                  "," + _dict[item].Classroom)
+        if(counter == 0):
+            print("")
 
     def grade(self,grade_command,_dict):
         grade_number = re.search(r'\d+', grade_command).group()
+        counter = 0
         if " High" in grade_command or " H" in grade_command:
             highest = _dict[0]
             for item in _dict:
@@ -90,7 +112,7 @@ class SchoolSearch:
                     _dict[item].GPA > highest.GPA):
                   highest = _dict[item]
             if highest.Grade == grade_number:
-                print (highest.StFirstName + " " + highest.StLastName)
+                print (highest.StLastName + "," + highest.StFirstName)
             return
         elif " Low" in grade_command or " L" in grade_command:
             lowest = _dict[0]
@@ -99,12 +121,15 @@ class SchoolSearch:
                     _dict[item].GPA < lowest.GPA):
                   lowest = _dict[item]
             if lowest.Grade == grade_number:
-                print (lowest.StFirstName + " " + lowest.StLastName)
+                print (lowest.StLastName + "," + lowest.StFirstName)
             return
         for item in _dict:
                 if(_dict[item].Grade == grade_number):
-                    print (_dict[item].StFirstName + " " + 
-                      _dict[item].StLastName + "\n")
+                    counter+= 1
+                    print (_dict[item].StLastName + "," + 
+                      _dict[item].StFirstName)
+        if(counter == 0):
+            print("")
 
     def average(self, command, _dict):
         inputs = command.split(" ")
@@ -130,16 +155,17 @@ class SchoolSearch:
         # compute average gpa and print message
         if selected_students:
             average_gpa = sum(selected_students) / len(selected_students)
-            print("Grade: {}".format(inputs[1]))
-            print("GPA: {}".format(round(average_gpa,2)))
+            print(inputs[1] + "," + str(round(average_gpa,2)))
         # in other case return
         else:
+            print()
             return
 
     def info(self, _dict):
         # if no students in database
         # do nothing and return
         if len(_dict) == 0:
+            print("\n")
             return
             # create dictionary-counter with keys - grade (0-6)
         # and values counts of students which have given grade
