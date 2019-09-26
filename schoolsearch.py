@@ -14,13 +14,19 @@ class Student:
 class SchoolSearch:
     def main(self):
         command = input("Enter search command: ") 
-        file = open("students.txt", "r")
+        students_file = open("list.txt", "r")
+        teachers_file = open("teachers.txt", "r")
         _dict = dict()
         i = 0
-        for line in file:
+        for line in students_file:
             student = line.rstrip('\n').split(",")
             # Increment i and set student to respective index in dictionary
-            _dict[i] = Student(student[0], student[1], student[2], student[3], student[4], student[5], student[6], student[7])
+            for _line in teachers_file:
+                teacher = _line.rstrip('\n').split(",")
+                if int(teacher[2]) == int(student[3]):
+                    _dict[i] = Student(student[0], student[1], student[2], student[3], student[4], student[5], teacher[0], teacher[1])
+                    teachers_file.seek(0)
+                    break
             i += 1
 
         while command != "Q" or command != "Quit":
@@ -48,7 +54,8 @@ class SchoolSearch:
             # print Goodbye and stop program
             elif command == "Q" or command == "Quit":
                 self.quit()
-                file.close()
+                students_file.close()
+                teachers_file.close()
                 return
             if (isComment):
                 command = input("")
@@ -65,7 +72,7 @@ class SchoolSearch:
                 if student.StLastName == inputs[1]:
                     counter+= 1
                     print (student.StLastName + "," + student.StFirstName + "," +
-                        student.Grade + "," + student.Classroom + "," + student.TLastName+
+                        student.Grade + "," + student.Classroom + "," + student.TLastName + "," +
                         student.TFirstName)
         elif len(inputs) == 3 and inputs[2] == "B" or inputs[2] == "Bus":
             for student in _dict.values():
