@@ -11,12 +11,19 @@ class Student:
         self.TLastName = TLastName
         self.TFirstName = TFirstName
 
+class Teacher:
+    def __init__(self, TLastName, TFirstName, Classroom):
+        self.TLastName = TLastName
+        self.TFirstName = TFirstName
+        self.Classroom = Classroom
+
 class SchoolSearch:
     def main(self):
         command = input("Enter search command: ") 
         students_file = open("list.txt", "r")
         teachers_file = open("teachers.txt", "r")
         _dict = dict()
+        teacher_dict = dict()
         i = 0
         for line in students_file:
             student = line.rstrip('\n').split(",")
@@ -28,6 +35,11 @@ class SchoolSearch:
                     teachers_file.seek(0)
                     break
             i += 1
+        i = 0
+        for line in teachers_file:
+            teacher = line.rstrip('\n').split(",")
+            teacher_dict[i] = Teacher(teacher[0], teacher[1], teacher[2])
+            i += 1
 
         while command != "Q" or command != "Quit":
             isComment = command.startswith('#') or command.startswith("//")
@@ -37,6 +49,9 @@ class SchoolSearch:
                 isAction = True
             elif self.is_command_type("Teacher",command):
                 self.teacher(command, _dict)
+                isAction = True
+            elif self.is_command_type("Classroom",command):
+                self.classroom(command, _dict, teacher_dict)
                 isAction = True
             elif self.is_command_type("Bus",command):
                 self.bus(command,_dict)
@@ -64,6 +79,16 @@ class SchoolSearch:
             else:
                 command = input("Enter search command: ") 
     
+    # Given classroom, lists all students and all teachers in that classroom
+    def classroom(self, command, _dict, teacher_dict):
+        inputs = command.split(" ")
+        for student in _dict.values():
+            if int(student.Classroom) == int(inputs[1]):
+                print(student.StLastName + "," + student.StFirstName)
+        for teacher in teacher_dict.values():
+            if int(teacher.Classroom) == int(inputs[1]):
+                print(teacher.TLastName + "," + teacher.TFirstName)
+
     def student(self, command, _dict):
         inputs = command.split(" ")
         counter = 0
