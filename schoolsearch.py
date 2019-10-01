@@ -59,8 +59,18 @@ class SchoolSearch:
             elif self.is_command_type("Grade",command) :
                 self.grade(command,_dict)
                 isAction = True
+            elif self.is_command_type("LamCommand",command) : #### block I added for N3
+                self.LamCommand(_dict,teacher_dict)
+                isAction = True
+            elif ("Enrollment" == command) : #### block I added for N3
+                self.enrollment(_dict,teacher_dict)
+                isAction = True
             elif self.is_command_type("Average",command):
                 self.average(command, _dict)
+                isAction = True
+            # command GPAv: <gpa number> H[igh]/L[ow] T[eacher]/B[us]/G[rade]
+            elif self.is_command_type("GPAv", command):
+                self.gpa(command, _dict)
                 isAction = True
             elif command == "Info" or command == "I":
                 self.info(_dict)
@@ -88,6 +98,117 @@ class SchoolSearch:
         for teacher in teacher_dict.values():
             if int(teacher.Classroom) == int(inputs[1]):
                 print(teacher.TLastName + "," + teacher.TFirstName)
+    
+    def gpa(self, command, _dict):
+        # parse command, separate command, gpa, condition (low or high) and mode (bus, teacher or grade)
+        try:
+            command, gpa, condition, mode = command.split()
+            gpa = float(gpa)
+        except (IndexError, ValueError):
+            print('')
+            return
+        students = []
+        # get list of students according condition
+        if condition == 'High' or condition == 'H':
+            condition = 'High'
+            # select all students with gpa equal or higher than gpa
+            for student in _dict.values():
+                if float(student.GPA) >= gpa:
+                    students.append(student)
+        elif condition == 'Low' or condition == 'L':
+            condition = 'Low'
+            # select all students with gpa equal or lower than gpa
+            for student in _dict.values():
+                if float(student.GPA) <= gpa:
+                    students.append(student)
+        # if condition was specified wrong, do nothing
+        else:
+            print('')
+            return
+        if not students:
+            print('')
+            return
+            # if user wants to see teachers of selected students
+        if mode == 'Teacher' or mode == 'T':
+            # get all teachers of selected students
+            teachers = [', '.join([student.TFirstName, student.TLastName]) for student in students]
+            # create dictionary with keys - teacher names and values - number of students and student's names and grades
+            # for example {'Marley, Bob': [2, [('Jones, Sara', '2', 'Smith, Simon', 3)]}
+            counts = {}
+            for i, teacher_ in enumerate(teachers):
+                if teacher_ not in counts:
+                    counts[teacher_] = [1, [
+                        (', '.join([students[i].StLastName, students[i].StFirstName]), students[i].Grade)]]
+                else:
+                    counts[teacher_][0] += 1
+                    counts[teacher_][1].append(
+                        (', '.join([students[i].StLastName, students[i].StFirstName]), students[i].Grade))
+            # print information
+            # print gpa level
+            print('GPA: {} and {}er'.format(gpa, condition))
+            # sort teachers by number of students
+            counts = sorted(list(counts.items()), reverse=True, key=lambda x: x[1])
+            # print teacher's name and number of his students
+            for count in counts:
+                print('Teacher {}: {} students'.format(count[0], count[1][0]))
+                # print students names and their grades
+                for student in sorted(count[1][1], key=lambda x: x[1], reverse=True):
+                    print('\tName: {}, grade: {}'.format(student[0], student[1]))
+        # if user wants to see teachers of selected students
+        elif mode == 'Bus' or mode == 'B':
+            # get all buses of selected students
+            buses = [student.Bus for student in students]
+            # create dictionary with keys - bus number and values - number of students and student's names and grades
+            # for example {'33': [2, [('Jones, Sara', '2', 'Smith, Simon', 3)]}
+            counts = {}
+            for i, bus_ in enumerate(buses):
+                if bus_ not in counts:
+                    counts[bus_] = [1, [
+                        (', '.join([students[i].StLastName, students[i].StFirstName]), students[i].Grade)]]
+                else:
+                    counts[bus_][0] += 1
+                    counts[bus_][1].append(
+                        (', '.join([students[i].StLastName, students[i].StFirstName]), students[i].Grade))
+            # print information
+            # print gpa level
+            print('GPA: {} and {}er'.format(gpa, condition))
+            # sort buses by number of students
+            counts = sorted(list(counts.items()), reverse=True, key=lambda x: x[1][0])
+            # print bus and number of students
+            for count in counts:
+                print('Bus number {}: {} students'.format(count[0], count[1][0]))
+                # print students names and their grades
+                for student in sorted(count[1][1], key=lambda x: x[1], reverse=True):
+                    print('\tName: {}, grade: {}'.format(student[0], student[1]))
+        elif mode == 'Grade' or mode == 'G':
+            try:
+                grades_average = sum([float(student.Grade) for student in students]) / len(students)
+            except ZeroDivisionError:
+                print('')
+                return
+            # create dictionary with keys - gpa and values - number of students and student's names and grades
+            # for example {'2.3': [2, [('Jones, Sara', '2', 'Smith, Simon', 3)]}
+            counts = {}
+            for i, student in enumerate(students):
+                if student.GPA not in counts:
+                    counts[student.GPA] = [1, [
+                        (', '.join([students[i].StLastName, students[i].StFirstName]), students[i].Grade)]]
+                else:
+                    counts[student.GPA][0] += 1
+                    counts[student.GPA][1].append(
+                        (', '.join([students[i].StLastName, students[i].StFirstName]), students[i].Grade))
+            print('GPA: {} and {}er'.format(gpa, condition))
+            print('Grade average: {}'.format(round(grades_average, 2)))
+            # sort gpa by number of students
+            counts = sorted(list(counts.items()), reverse=True, key=lambda x: x[0])
+            # print gpa and number of students
+            for count in counts:
+                print('GPA {}: {} students'.format(count[0], count[1][0]))
+                # print students names and their grades
+                for student in sorted(count[1][1], key=lambda x: x[1], reverse=True):
+                    print('\tName: {}, grade: {}'.format(student[0], student[1]))
+        else:
+            print()
 
     def student(self, command, _dict):
         inputs = command.split(" ")
@@ -217,6 +338,30 @@ class SchoolSearch:
         # print results
         for key in sorted(grades_dict.keys()):
             print("Grade {}: {}".format(key, grades_dict[key]))
+
+    def LamCommand(self,tgg_command,_dict,teacher_dict):
+        grade_num = re.search(r'\d+', tgg_command).group()
+        classroom_list = []
+        for item in _dict:
+            if (_dict[item].Classroom not in classroom_list):
+                classroom_list.append(_dict[item].Classroom)
+            else:
+                pass
+        for item in classroom_list:
+            for ele in teacher_dict:
+                if((int) (teacher_dict[ele].Classroom) == (int) (item)):
+                    print (teacher_dict[ele].TLastName + "," +teacher_dict[ele].TFirstName)
+                else: pass
+    def enrollment(self,_dict,teacher_dict):
+        print ("here")
+        classroom_dict = dict()
+        for student in _dict:
+            if (((int) (_dict[student].Classroom)) not in classroom_dict):
+                classroom_dict[((int)(_dict[student].Classroom))] = 0
+            else: pass
+            classroom_dict[((int)(_dict[student].Classroom))]+=1
+        for i in sorted (classroom_dict) : 
+            print(str(i) +"," + str(classroom_dict[i]))
 
     def quit(self):
         # print goodbye message
